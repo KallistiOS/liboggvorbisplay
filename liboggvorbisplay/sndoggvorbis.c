@@ -15,8 +15,6 @@
 #include <vorbis/vorbisfile.h>
 #include "misc.h"
 
-CVSID("$Id: sndoggvorbis.c,v 1.13 2003/05/21 03:47:36 bardtx Exp $");
-
 /* Enable this #define to do timing testing */
 /* #define TIMING_TESTS */
 
