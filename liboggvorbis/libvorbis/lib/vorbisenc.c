@@ -11,7 +11,6 @@
  ********************************************************************
 
  function: simple programmatic interface for encoder mode setup
- last mod: $Id: vorbisenc.c,v 1.3 2002/07/27 22:06:02 titzesan Exp $
 
  ********************************************************************/
 

@@ -12,7 +12,6 @@
 
  function: libvorbis backend and mapping structures; needed for 
            static mode headers
- last mod: $Id: backends.h,v 1.3 2002/07/27 22:06:02 titzesan Exp $
 
  ********************************************************************/
 
