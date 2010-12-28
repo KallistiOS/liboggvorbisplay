@@ -2,9 +2,10 @@
 
 static kthread_t * thd = NULL;
 
-static void sndserver_thread(void *blagh) {
+static void *sndserver_thread(void *blagh) {
 	printf("sndserver: pid is %d\n", thd_get_current()->tid);
 	sndoggvorbis_mainloop();
+	return NULL;
 }
 
 int sndoggvorbis_init() {
@@ -17,7 +18,7 @@ int sndoggvorbis_init() {
 		return -1;
 
 	printf("sndserver: initializing sndoggvorbis 0.7 [OggVorbis 1.0 based]\n");
-	thd = thd_create(sndserver_thread, NULL);
+	thd = thd_create(0, sndserver_thread, NULL);
 	if (thd != NULL) {
 		/* Wait until the oggvorbis decoder thread is ready */
 		sndoggvorbis_wait_start();
@@ -38,7 +39,7 @@ void sndoggvorbis_shutdown() {
 	}
 
 	sndoggvorbis_thd_quit();
-	thd_wait(thd);
+	thd_join(thd, NULL);
 	thd = NULL;
 
 	printf("sndserver: exited successfully\n");
