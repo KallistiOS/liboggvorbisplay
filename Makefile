@@ -17,6 +17,8 @@ copylibs:
 # creates the kos link to the headers
 create_kos_link:
 	rm -f ../include/oggvorbis
-	ln -s ../liboggvorbis/include ../include/oggvorbis
+	ln -s ../liboggvorbis/include/oggvorbis/ ../include/oggvorbis
+	rm -f ../include/ogg
+	ln -s ../liboggvorbis/include/ogg/ ../include/ogg
 
 include $(KOS_BASE)/addons/Makefile.prefab
