@@ -8,10 +8,15 @@ TARGET = liboggvorbisplay.a
 OBJS =
 SUBDIRS = liboggvorbis liboggvorbisplay
 
-all: subdirs copylibs
+all: create_kos_link subdirs copylibs
 
 # Copy libs from target oggvorbis and oggvorbisplay to root
 copylibs:
 	cp ./liboggvorbisplay/lib/liboggvorbisplay.a $(KOS_BASE)/addons/lib/$(KOS_ARCH)/
+
+# creates the kos link to the headers
+create_kos_link:
+	rm -f ../include/oggvorbis
+	ln -s ../liboggvorbis/include ../include/oggvorbis
 
 include $(KOS_BASE)/addons/Makefile.prefab
