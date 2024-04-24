@@ -1,5 +1,7 @@
 #include <kos.h>
 
+#include "oggvorbis/sndoggvorbis.h"
+
 static kthread_t * thd = NULL;
 
 static void *sndserver_thread(void *blagh) {

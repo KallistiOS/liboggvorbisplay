@@ -3,14 +3,13 @@
  *
  * sndoggvorbis.c
  * Copyright (C)2001,2002 Thorsten Titze
- * Copyright (C)2002,2003,2004 Dan Potter
+ * Copyright (C)2002,2003,2004 Megan Potter
  *
  * An Ogg/Vorbis player library using sndstream and functions provided by
  * ivorbisfile (Tremor).
  */
 
 #include <kos.h>
-/* #include <sndserver.h> */
 #include <assert.h>
 #include <vorbis/vorbisfile.h>
 #include "misc.h"
@@ -61,42 +60,40 @@ static int sndoggvorbis_queue_enabled;		/* wait in STATUS_QUEUED? */
 static volatile int sndoggvorbis_loop;		/* current looping mode */
 static volatile int sndoggvorbis_status;	/* current status of thread */
 static volatile int sndoggvorbis_bitrateint;	/* bitrateinterval in calls */
-static semaphore_t *sndoggvorbis_halt_sem;	/* semaphore to pause thread */
+static semaphore_t sndoggvorbis_halt_sem;	/* semaphore to pause thread */
 static char sndoggvorbis_lastfilename[256];	/* filename of last played file */
 static int current_section;
 static int sndoggvorbis_vol = 240;
 
 /* Enable/disable queued waiting */
-void sndoggvorbis_queue_enable() {
+void sndoggvorbis_queue_enable(void) {
 	sndoggvorbis_queue_enabled = 1;
 }
-void sndoggvorbis_queue_disable() {
+void sndoggvorbis_queue_disable(void) {
 	sndoggvorbis_queue_enabled = 0;
 }
 
 /* Wait for the song to be queued */
-void sndoggvorbis_queue_wait() {
-	assert(sndoggvorbis_queue_wait);
-
+void sndoggvorbis_queue_wait(void) {
 	/* Make sure we've loaded ok */
 	while (sndoggvorbis_status != STATUS_QUEUED)
 		thd_pass();
 }
 
 /* Queue the song to start if it's in QUEUED */
-void sndoggvorbis_queue_go() {
+void sndoggvorbis_queue_go(void) {
 	/* Make sure we're ready */
 	sndoggvorbis_queue_wait();
 
 	/* Tell it to go */
 	sndoggvorbis_status = STATUS_STARTING;
-	sem_signal(sndoggvorbis_halt_sem);
+	sem_signal(&sndoggvorbis_halt_sem);
 }
 
 /* getter and setter functions for information access 
  */
 
-int sndoggvorbis_isplaying()
+int sndoggvorbis_isplaying(void)
 {
 	if((sndoggvorbis_status == STATUS_PLAYING) || 
 	   (sndoggvorbis_status == STATUS_STARTING) ||
@@ -125,13 +122,13 @@ void sndoggvorbis_setbitrateinterval(int interval)
  * NOTE:
  * The value returned is only actualized every once in a while !
  */
-long sndoggvorbis_getbitrate()
+long sndoggvorbis_getbitrate(void)
 {
 	return(sndoggvorbis_info.actualbitrate);
 	// return(VorbisFile_getBitrateInstant());
 }
 
-long sndoggvorbis_getposition()
+long sndoggvorbis_getposition(void)
 {
 	return(sndoggvorbis_info.actualposition);
 }
@@ -140,15 +137,15 @@ long sndoggvorbis_getposition()
  * fields. It is thinkable that these return something like "NOT SET"
  * in case the specified field has not been set !
  */
-char *sndoggvorbis_getartist()
+char *sndoggvorbis_getartist(void)
 {
 	return(sndoggvorbis_info.artist);
 }
-char *sndoggvorbis_gettitle()
+char *sndoggvorbis_gettitle(void)
 {
 	return(sndoggvorbis_info.title);
 }
-char *sndoggvorbis_getgenre()
+char *sndoggvorbis_getgenre(void)
 {
 	return(sndoggvorbis_info.genre);
 }
@@ -189,7 +186,7 @@ static void sndoggvorbis_clear_comments() {
  * let's the caller wait until the vorbis thread is signalling that it is ready
  * to decode data
  */
-void sndoggvorbis_wait_start()
+void sndoggvorbis_wait_start(void)
 {
 	while(sndoggvorbis_status != STATUS_READY)
 		thd_pass();
@@ -292,7 +289,7 @@ static void *callback(snd_stream_hnd_t hnd, int size, int * size_out)
  * this function is called by sndoggvorbis_mainloop and handles all the threads
  * status handling and playing functionality.
  */
-void sndoggvorbis_thread() 
+void sndoggvorbis_thread(void) 
 {	
 	int stat;
 
@@ -309,7 +306,7 @@ void sndoggvorbis_thread()
 				
 			case STATUS_READY:
 				printf("oggthread: waiting on semaphore\n");
-				sem_wait(sndoggvorbis_halt_sem);
+				sem_wait(&sndoggvorbis_halt_sem);
 				printf("oggthread: released from semaphore (status=%d)\n", sndoggvorbis_status);
 				break;
 				
@@ -329,7 +326,7 @@ void sndoggvorbis_thread()
 				
 			case STATUS_QUEUED:
 				printf("oggthread: queue waiting on semaphore\n");
-				sem_wait(sndoggvorbis_halt_sem);
+				sem_wait(&sndoggvorbis_halt_sem);
 				printf("oggthread: queue released from semaphore\n");
 				break;
 
@@ -417,7 +414,7 @@ void sndoggvorbis_thread()
  * function to stop the current playback and set the thread back to
  * STATUS_READY mode.
  */
-void sndoggvorbis_stop()
+void sndoggvorbis_stop(void)
 {
 	if (sndoggvorbis_status != STATUS_PLAYING
 		&& sndoggvorbis_status != STATUS_STARTING
@@ -492,7 +489,7 @@ int sndoggvorbis_start_fd(FILE * fd, int loop)
 		sndoggvorbis_status = STATUS_QUEUEING;
 	else
 		sndoggvorbis_status = STATUS_STARTING;
-	sem_signal(sndoggvorbis_halt_sem);
+	sem_signal(&sndoggvorbis_halt_sem);
 
 	/* Grab all standard comments from the file
 	 * (based on v-comment.html found in OggVorbis source packages
@@ -539,12 +536,12 @@ int sndoggvorbis_start(const char *filename,int loop)
  *
  * function that stops playing and shuts down the player thread.
  */
-void sndoggvorbis_thd_quit()
+void sndoggvorbis_thd_quit(void)
 {
 	sndoggvorbis_status = STATUS_QUIT;
 
 	/* In case player is READY -> tell it to continue */
-	sem_signal(sndoggvorbis_halt_sem);
+	sem_signal(&sndoggvorbis_halt_sem);
         while (sndoggvorbis_status != STATUS_ZOMBIE)
                 thd_pass();
         // snd_stream_stop();
@@ -565,11 +562,11 @@ void sndoggvorbis_volume(int vol)
  * code that runs in our decoding thread. sets up the semaphore. initializes the stream
  * driver and calls our *real* thread code
  */
-void sndoggvorbis_mainloop()
+void sndoggvorbis_mainloop(void)
 {
 	/* create a semaphore for thread to halt on
 	 */
-	sndoggvorbis_halt_sem = sem_create(0);
+	sem_init(&sndoggvorbis_halt_sem, 0);
 	
 	sndoggvorbis_status = STATUS_INIT;
 	sndoggvorbis_queue_enabled = 0;
@@ -585,5 +582,5 @@ void sndoggvorbis_mainloop()
 
 	/* destroy the semaphore we first created
 	 */
-	sem_destroy(sndoggvorbis_halt_sem);
+	sem_destroy(&sndoggvorbis_halt_sem);
 }
