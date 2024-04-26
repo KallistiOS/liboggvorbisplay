@@ -15,37 +15,37 @@ __BEGIN_DECLS
 
 #include <stdio.h>
 
-int sndoggvorbis_init();
+int sndoggvorbis_init(void);
 int sndoggvorbis_start(const char *filename,int loop);
 int sndoggvorbis_start_fd(FILE *f, int loop);
-void sndoggvorbis_stop();
-void sndoggvorbis_shutdown();
+void sndoggvorbis_stop(void);
+void sndoggvorbis_shutdown(void);
 
-int sndoggvorbis_isplaying();
+int sndoggvorbis_isplaying(void);
 
 void sndoggvorbis_volume(int vol);
 
-void sndoggvorbis_mainloop();
-void sndoggvorbis_wait_start();
+void sndoggvorbis_mainloop(void);
+void sndoggvorbis_wait_start(void);
 
 void sndoggvorbis_setbitrateinterval(int interval);
-long sndoggvorbis_getbitrate();
-long sndoggvorbis_getposition();
+long sndoggvorbis_getbitrate(void);
+long sndoggvorbis_getposition(void);
 
 char *sndoggvorbis_getcommentbyname(const char *commentfield);
-char *sndoggvorbis_getartist();
-char *sndoggvorbis_gettitle();
-char *sndoggvorbis_getgenre();
+char *sndoggvorbis_getartist(void);
+char *sndoggvorbis_gettitle(void);
+char *sndoggvorbis_getgenre(void);
 
 /* Enable/disable queued waiting */
-void sndoggvorbis_queue_enable();
-void sndoggvorbis_queue_disable();
+void sndoggvorbis_queue_enable(void);
+void sndoggvorbis_queue_disable(void);
 
 /* Wait for the song to be queued */
-void sndoggvorbis_queue_wait();
+void sndoggvorbis_queue_wait(void);
 
 /* Queue the song to start if it's in QUEUED */
-void sndoggvorbis_queue_go();
+void sndoggvorbis_queue_go(void);
 
 __END_DECLS
 
