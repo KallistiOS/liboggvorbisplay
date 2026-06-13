@@ -2,7 +2,7 @@
 #
 # Library Makefile
 # (c)2001 Thorsten Titze
-# Based on KOS Makefiles by Dan Potter
+# Based on KOS Makefiles by Megan Potter
 
 TARGET = liboggvorbisplay.a
 OBJS =
@@ -16,9 +16,9 @@ copylibs:
 
 # creates the kos link to the headers
 create_kos_link:
-	rm -f ../include/oggvorbis
-	ln -s ../liboggvorbis/include/oggvorbis/ ../include/oggvorbis
-	rm -f ../include/ogg
-	ln -s ../liboggvorbis/include/ogg/ ../include/ogg
+	rm -f $(KOS_BASE)/addons/include/oggvorbis
+	ln -s $(CURDIR)/include/oggvorbis/ $(KOS_BASE)/addons/include/oggvorbis
+	rm -f $(KOS_BASE)/addons/include/ogg
+	ln -s $(CURDIR)/include/ogg/ $(KOS_BASE)/addons/include/ogg
 
 include $(KOS_BASE)/addons/Makefile.prefab
