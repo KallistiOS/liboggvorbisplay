@@ -2,7 +2,7 @@
 #
 # Library Makefile
 # (c)2001 Thorsten Titze
-# Based on KOS Makefiles by Dan Potter
+# Based on KOS Makefiles by Megan Potter
 
 OBJS = mdct.o smallft.o block.o envelope.o window.o lsp.o lpc.o analysis.o synthesis.o psy.o info.o floor1.o floor0.o res0.o mapping0.o registry.o codebook.o sharedbook.o lookup.o bitrate.o vorbisfile.o
 KOS_CFLAGS += -I. -I../include -DLITTLE_ENDIAN=1
