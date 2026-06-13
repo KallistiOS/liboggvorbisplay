@@ -20,11 +20,11 @@
 #define BUF_SIZE 65536			/* Size of buffer */
 
 /* complete buffer + 16KB safety */
-static uint8 pcm_buffer[BUF_SIZE + 16384] __attribute__((aligned(32)));
-static uint8 *pcm_ptr=pcm_buffer;		/* place we write to */
+static uint8_t pcm_buffer[BUF_SIZE + 16384] __attribute__((aligned(32)));
+static uint8_t *pcm_ptr=pcm_buffer;		/* place we write to */
 
-static int32 pcm_count=0;			/* bytes in buffer */
-static int32 last_read=0;			/* number of bytes the sndstream driver grabbed at last callback */
+static int32_t pcm_count=0;			/* bytes in buffer */
+static int32_t last_read=0;			/* number of bytes the sndstream driver grabbed at last callback */
 
 static int tempcounter =0;
 

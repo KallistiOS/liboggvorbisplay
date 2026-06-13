@@ -72,7 +72,7 @@
 #else
 
 //#  include <sys/types.h>
-#  include <arch/types.h>
+#  include <stdint.h>
 #  include <ogg/config_types.h>
 
 #endif
